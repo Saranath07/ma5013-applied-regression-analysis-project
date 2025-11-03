@@ -1,0 +1,24 @@
+\frametitle{The Final Parsimonious Model}
+\frametitle{The Final Parsimonious Model}
+    After removing insignificant predictors (\texttt{energy\_valence\_interact} and \texttt{tempo\_c}), we arrive at our final model where every variable is statistically significant (p $<$ 0.05).
+
+    \begin{block}{Final Parsimonious Model RLM Results}
+    \vspace{0.5em}
+    {\scriptsize
+    \begin{tabular}{lrrrrrr}
+    \toprule
+    \textbf{Variable} & \textbf{coef} & \textbf{std err} & \textbf{z} & \textbf{$P>|z|$} & \textbf{[0.025} & \textbf{0.975]} \\
+    \midrule
+    $\beta_0$ (const) & 58.47 & 0.943 & 62.02 & 0.000 & 56.63 & 60.32 \\
+    $\beta_2$ ($x_2$: energy) & -6.18 & 1.038 & -5.95 & 0.000 & -8.22 & -4.15 \\
+    $\beta_3$ ($x_3$: valence) & -7.32 & 1.055 & -6.94 & 0.000 & -9.39 & -5.25 \\
+    $\beta_4$ ($x_4$: acousticness) & -24.57 & 1.121 & -21.92 & 0.000 & -26.77 & -22.38 \\
+    $\beta_5$ ($x_5$: instrumentalness) & -6.83 & 0.645 & -10.59 & 0.000 & -8.10 & -5.57 \\
+    tempo\_c\_sq & -0.001 & 0.000 & -7.38 & 0.000 & -0.001 & -0.001 \\
+    duration\_s\_c & 0.009 & 0.002 & 4.44 & 0.000 & 0.005 & 0.013 \\
+    duration\_s\_c\_sq & -1.75e-05 & 1.52e-06 & -11.52 & 0.000 & -2.05e-05 & -1.45e-05 \\
+    acoustic\_valence\_interact & 8.43 & 2.046 & 4.12 & 0.000 & 4.42 & 12.44 \\
+    \bottomrule
+    \end{tabular}
+    }
+    \end{block}
