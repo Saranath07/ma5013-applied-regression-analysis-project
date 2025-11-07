@@ -46,7 +46,7 @@
 % ------------------------------------------------------------------
 \section{Introduction}
 
-The multi-billion dollar music industry is in a perpetual search for the "recipe" for a hit song. While artistic creativity and cultural trends are paramount, the intrinsic audio features of a song may also hold statistical clues to its commercial potential. This project investigates this possibility by building a regression model to predict a song's popularity on Spotify, the world's leading music streaming service. The goal is not just to find a formula, but to demonstrate a rigorous, diagnostic-driven approach to regression modeling.
+The multi-billion dollar music industry is in a perpetual search for the "recipe" for a hit song. While artistic creativity and cultural trends are paramount, the intrinsic audio features of a song may also hold statistical clues to its commercial potential. This project investigates this possibility by building a regression model to predict a song's popularity on the Spotify dataset. The goal is not just to find a formula, but to demonstrate a rigorous, diagnostic-driven approach to regression modeling.
 
 Our analysis is guided by four central research questions:
 \begin{enumerate}
@@ -152,7 +152,7 @@ The failure of the naive OLS model necessitated a deeper investigation to identi
 \subsection{Methods: Identifying the Root Cause}
 The heavy tails in the Q-Q plot suggested two possibilities: either the response variable was skewed, or the model was being distorted by influential outliers.
 
-A Box-Cox test, which suggests an optimal power transformation to normalize data, yielded a lambda value of 1.025, which is statistically identical to 1 (no transformation). This test confirmed that simple skewness was not the issue. The true problem was \textbf{influential outliers}—a subset of data points that were disproportionately pulling the regression line towards them and distorting the residuals for the majority of the data.
+A Box-Cox test, which suggests an optimal power transformation on the response variable ($y$ : \texttt{popularity}) to normalize data, yielded a lambda value of 1.025, which is statistically identical to 1 (no transformation). This test confirmed that simple skewness was not the issue. The true problem was \textbf{influential outliers}—a subset of data points that were disproportionately pulling the regression line towards them and distorting the residuals for the majority of the data.
 
 We confirmed this using Cook's Distance, a measure of an observation's influence on the model. Figure \ref{fig:cooks} shows that \textbf{455 observations} exceeded the standard influence threshold.
 
