@@ -1,0 +1,34 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Data Description}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Preliminary Studies and the Naive Model}{2}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Exploratory Data Analysis}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Distribution of song popularity scores.}}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:eda_dist}{{1}{2}{Distribution of song popularity scores}{figure.caption.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Correlation matrix of audio features.}}{2}{figure.caption.1}\protected@file@percent }
+\newlabel{fig:eda_corr}{{2}{2}{Correlation matrix of audio features}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}A Flawed Baseline: The Ordinary Least Squares (OLS) Model}{2}{subsection.3.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces VIF Scores for the Naive OLS Model.}}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{tab:vif_ols}{{1}{3}{VIF Scores for the Naive OLS Model}{figure.caption.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Q-Q plot of residuals from the naive OLS model, showing a severe violation of the normality assumption.}}{3}{figure.caption.2}\protected@file@percent }
+\newlabel{fig:ols_qq}{{3}{3}{Q-Q plot of residuals from the naive OLS model, showing a severe violation of the normality assumption}{figure.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Statistical Analysis: A Diagnostic Journey to a Valid Model}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Methods: Identifying the Root Cause}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Cook's Distance plot, identifying 455 influential outliers that are distorting the OLS model.}}{4}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:cooks}{{4}{4}{Cook's Distance plot, identifying 455 influential outliers that are distorting the OLS model}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Methods: The Correct Remedy}{4}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Results: The Final Parsimonious Model}{4}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Proof of RLM's effectiveness: Points with high influence (Cook's Distance) in the OLS model are assigned low weights by the robust model.}}{5}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:rlm_weights}{{5}{5}{Proof of RLM's effectiveness: Points with high influence (Cook's Distance) in the OLS model are assigned low weights by the robust model}{figure.caption.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Final Parsimonious Robust Model Results.}}{5}{table.caption.5}\protected@file@percent }
+\newlabel{tab:final_model}{{2}{5}{Final Parsimonious Robust Model Results}{table.caption.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Visual Confirmation of Results}{5}{subsection.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Partial regression plots for the final model, visually confirming the isolated effect of each predictor on popularity.}}{6}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:partial_plots}{{6}{6}{Partial regression plots for the final model, visually confirming the isolated effect of each predictor on popularity}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{6}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Codebase}{6}{section.6}\protected@file@percent }
+\gdef \@abspage@last{6}

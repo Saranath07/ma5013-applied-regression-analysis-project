@@ -1,0 +1,231 @@
+\documentclass[11pt, letterpaper]{article}
+
+% --- PACKAGES ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{caption}
+
+% --- HYPERLINK SETUP ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={The Hit Song Formula: A Regression Analysis of Spotify Song Popularity},
+    pdfauthor={Saranath P, S Shriprasad},
+}
+
+% --- TITLE AND AUTHOR ---
+\title{\textbf{The Hit Song Formula: A Methodological Journey in Applied Regression Analysis}}
+\author{
+    Saranath P (DA25E003) \and S Shriprasad (DA25E054) \\
+    \small Indian Institute of Technology Madras \\
+    \small MA 5013: Applied Regression Analysis, Fall 2025
+}
+\date{November 7, 2025}
+
+% --- DOCUMENT START ---
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\setcounter{page}{1}
+
+% ------------------------------------------------------------------
+% SECTION 1: INTRODUCTION
+% ------------------------------------------------------------------
+\section{Introduction}
+
+The multi-billion dollar music industry is in a perpetual search for the "recipe" for a hit song. While artistic creativity and cultural trends are paramount, the intrinsic audio features of a song may also hold statistical clues to its commercial potential. This project investigates this possibility by building a regression model to predict a song's popularity on Spotify, the world's leading music streaming service. The goal is not just to find a formula, but to demonstrate a rigorous, diagnostic-driven approach to regression modeling.
+
+Our analysis is guided by four central research questions:
+\begin{enumerate}
+    \item \textbf{The "Big Five":} Which core audio features (e.g., danceability, energy, valence) have the most significant impact on popularity?
+    \item \textbf{The "Goldilocks Zone" Hypothesis:} Do non-linear "sweet spots" exist? Are songs with moderate tempo and duration more popular than those at the extremes?
+    \item \textbf{The "Sad Banger" Phenomenon:} Does the combination of high energy and low valence (sadness) lead to disproportionately popular songs?
+    \item \textbf{The "Acoustic Amplification" Effect:} Does a song's acoustic nature change the impact of its emotional tone on its popularity?
+\end{enumerate}
+By answering these questions, we aim to provide a statistically defensible model that sheds light on the characteristics of popular music.
+
+% ------------------------------------------------------------------
+% SECTION 2: DATA DESCRIPTION
+% ------------------------------------------------------------------
+\section{Data Description}
+
+The dataset for this project was sourced from the publicly available "Ultimate Spotify Tracks Database" on Kaggle. It contains audio feature data for a vast collection of songs on the platform. For this analysis, a random sample of \textbf{10,000 songs} was selected to ensure a manageable yet statistically robust dataset.
+
+The \textbf{response variable} is \texttt{popularity}, a numerical score from 0 to 100 assigned by Spotify's algorithm, which reflects a track's relative success. This continuous, non-categorical variable is ideal for regression analysis.
+
+The \textbf{predictor variables} are quantitative audio features provided by the Spotify API, including:
+\begin{itemize}
+    \item \texttt{danceability}: Suitability of a track for dancing based on tempo, rhythm stability, etc.
+    \item \texttt{energy}: A perceptual measure of intensity and activity.
+    \item \texttt{valence}: A measure of musical positiveness (e.g., happy, cheerful songs have high valence).
+    \item \texttt{acousticness}: Confidence measure of whether the track is acoustic.
+    \item \texttt{instrumentalness}: Predicts whether a track contains no vocals.
+    \item \texttt{tempo}: The overall estimated tempo in beats per minute (BPM).
+    \item \texttt{duration\_ms}: The duration of the track in milliseconds.
+\end{itemize}
+
+% ------------------------------------------------------------------
+% SECTION 3: PRELIMINARY STUDIES & THE NAIVE MODEL
+% ------------------------------------------------------------------
+\section{Preliminary Studies and the Naive Model}
+\subsection{Exploratory Data Analysis}
+Initial exploration of the data revealed two key insights. First, the distribution of the \texttt{popularity} score is approximately bell-shaped, which is a good starting point for linear regression (Figure \ref{fig:eda_dist}). Second, a correlation matrix of the predictors (Figure \ref{fig:eda_corr}) showed strong positive correlations between features like \texttt{energy} and \texttt{loudness} (0.82), and moderate correlations between \texttt{danceability} and \texttt{valence} (0.55). These relationships signal a potential issue with \textit{multicollinearity}, where predictors are correlated with each other, which can make model results unreliable.
+
+\begin{figure}[h!]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{plot_eda_popularity_dist.png}
+        \caption{Distribution of song popularity scores.}
+        \label{fig:eda_dist}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{plot_eda_correlation_matrix.png}
+        \caption{Correlation matrix of audio features.}
+        \label{fig:eda_corr}
+    \end{minipage}
+\end{figure}
+
+\subsection{A Flawed Baseline: The Ordinary Least Squares (OLS) Model}
+Our first step was to fit a standard Ordinary Least Squares (OLS) model using the "Big Five" predictors to predict popularity. While the model appeared statistically significant overall (F-statistic = 450.5, p < 0.001), a rigorous diagnostic check revealed critical flaws that invalidated its results.
+
+\textbf{Problem 1: Severe Multicollinearity.} We used the Variance Inflation Factor (VIF) to test for multicollinearity. A VIF score above 5 is a cause for concern. As shown in Table \ref{tab:vif_ols}, three predictors exceeded this threshold, with \texttt{danceability} having a VIF over 10. This confirmed that the coefficients in our model were unstable and their p-values could not be trusted.
+
+\textbf{Problem 2: Non-Normal Residuals.} A fundamental assumption of OLS regression is that the errors (or residuals) are normally distributed. We used a Quantile-Quantile (Q-Q) plot (Figure \ref{fig:ols_qq}) to check this. In a valid model, the points should fall along the red diagonal line. Instead, we observed a severe 'S' curve, indicating heavy tails. This violation was so extreme that it invalidated all statistical tests (p-values and confidence intervals) from the model summary.
+
+\begin{table}[h!]
+    \centering
+    \caption{VIF Scores for the Naive OLS Model.}
+    \label{tab:vif_ols}
+    \begin{tabular}{lr}
+        \toprule
+        \textbf{Variable} & \textbf{VIF Score} \\
+        \midrule
+        \texttt{danceability} & \textcolor{red}{10.17} \\
+        \texttt{energy} & \textcolor{red}{6.61} \\
+        \texttt{valence} & \textcolor{red}{6.50} \\
+        \texttt{acousticness} & 2.14 \\
+        \texttt{instrumentalness} & 1.39 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{plot_ols_qq.png}
+    \caption{Q-Q plot of residuals from the naive OLS model, showing a severe violation of the normality assumption.}
+    \label{fig:ols_qq}
+\end{figure}
+
+\clearpage
+
+% ------------------------------------------------------------------
+% SECTION 4: STATISTICAL ANALYSIS: A DIAGNOSTIC JOURNEY
+% ------------------------------------------------------------------
+\section{Statistical Analysis: A Diagnostic Journey to a Valid Model}
+
+The failure of the naive OLS model necessitated a deeper investigation to identify and treat the root cause of the problems.
+
+\subsection{Methods: Identifying the Root Cause}
+The heavy tails in the Q-Q plot suggested two possibilities: either the response variable was skewed, or the model was being distorted by influential outliers.
+
+A Box-Cox test, which suggests an optimal power transformation to normalize data, yielded a lambda value of 1.025, which is statistically identical to 1 (no transformation). This test confirmed that simple skewness was not the issue. The true problem was \textbf{influential outliers}—a subset of data points that were disproportionately pulling the regression line towards them and distorting the residuals for the majority of the data.
+
+We confirmed this using Cook's Distance, a measure of an observation's influence on the model. Figure \ref{fig:cooks} shows that \textbf{455 observations} exceeded the standard influence threshold.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{plot_cooks_distance.png}
+    \caption{Cook's Distance plot, identifying 455 influential outliers that are distorting the OLS model.}
+    \label{fig:cooks}
+\end{figure}
+
+\subsection{Methods: The Correct Remedy}
+Since the core issue was outliers, the appropriate solution was not data transformation but a more advanced modeling technique: \textbf{Robust Linear Models (RLM)}. RLM is designed to be insensitive to outliers. It works through an iterative process (Iteratively Reweighted Least Squares) that automatically identifies and down-weights the influence of outlying observations. This forces the model to fit the bulk of the data rather than the extremes.
+
+Figure \ref{fig:rlm_weights} provides powerful visual proof that the RLM technique was successful. It plots the final weight assigned by the RLM to each data point against that point's original Cook's Distance. Observations that were highly influential in the OLS model (high Cook's Distance) were systematically assigned low weights by the RLM, thus neutralizing their distorting effect.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{plot_rlm_weights.png}
+    \caption{Proof of RLM's effectiveness: Points with high influence (Cook's Distance) in the OLS model are assigned low weights by the robust model.}
+    \label{fig:rlm_weights}
+\end{figure}
+
+With a robust method in place, we addressed the multicollinearity issue by removing the predictor with the highest VIF score, \texttt{danceability}. Finally, we used backward elimination to remove statistically insignificant predictors from the full model (those with p > 0.05), resulting in a final model that is robust, stable, and parsimonious.
+
+\subsection{Results: The Final Parsimonious Model}
+Our final model (Table \ref{tab:final_model}) is statistically sound and provides clear answers to our research questions. Every predictor is significant at the p < 0.05 level.
+
+\begin{table}[h!]
+    \centering
+    \caption{Final Parsimonious Robust Model Results.}
+    \label{tab:final_model}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lrrrrrr}
+        \toprule
+        \textbf{Variable} & \textbf{Coefficient} & \textbf{Std. Error} & \textbf{z-value} & \textbf{P > |z|} & \textbf{[0.025} & \textbf{0.975]} \\
+        \midrule
+        (Intercept) & 58.47 & 0.943 & 62.02 & <0.001 & 56.63 & 60.32 \\
+        \texttt{energy} & -6.18 & 1.038 & -5.95 & <0.001 & -8.22 & -4.15 \\
+        \texttt{valence} & -7.32 & 1.055 & -6.94 & <0.001 & -9.39 & -5.25 \\
+        \texttt{acousticness} & -24.57 & 1.121 & -21.92 & <0.001 & -26.77 & -22.38 \\
+        \texttt{instrumentalness} & -6.83 & 0.645 & -10.59 & <0.001 & -8.10 & -5.57 \\
+        \texttt{tempo\_c\_sq} & -0.001 & 0.000 & -7.38 & <0.001 & -0.001 & -0.001 \\
+        \texttt{duration\_s\_c} & 0.009 & 0.002 & 4.44 & <0.001 & 0.005 & 0.013 \\
+        \texttt{duration\_s\_c\_sq} & -1.75e-05 & 1.52e-06 & -11.52 & <0.001 & -2.05e-05 & -1.45e-05 \\
+        \texttt{acoustic\_valence\_interact} & 8.43 & 2.046 & 4.12 & <0.001 & 4.42 & 12.44 \\
+        \bottomrule
+    \end{tabular}
+    }
+\end{table}
+
+\textbf{Answering the Research Questions:}
+\begin{itemize}
+    \item \textbf{RQ1 ("Big Five"): Confirmed.} \texttt{Energy}, \texttt{valence}, \texttt{acousticness}, and \texttt{instrumentalness} are all significant negative predictors. Highly produced (less acoustic, less instrumental), less energetic, and less "happy" songs are associated with higher popularity.
+    \item \textbf{RQ2 ("Goldilocks Zone"): Strongly Supported.} The significant negative coefficients on the squared terms for tempo (\texttt{tempo\_c\_sq}) and duration (\texttt{duration\_s\_c\_sq}) confirm an inverted U-shaped relationship. Songs that are too slow/fast or too short/long are less popular.
+    \item \textbf{RQ3 ("Sad Banger"): Not Supported.} The interaction term between energy and valence was not statistically significant and was removed from the final model.
+    \item \textbf{RQ4 ("Acoustic Amplification"): Supported.} The interaction term between \texttt{acousticness} and \texttt{valence} is significant and positive. This means that for highly acoustic tracks, the negative impact of emotional tone (\texttt{valence}) on popularity is significantly weakened.
+\end{itemize}
+
+\subsection{Visual Confirmation of Results}
+Partial regression plots (Figure \ref{fig:partial_plots}) visually confirm these findings. Each plot shows the isolated effect of one predictor after controlling for all others. We can clearly see the negative slopes for the core features, the inverted U-shape for tempo and duration (indicated by the negative slope on the squared term), and the positive slope for the interaction term.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{plot_partial_regression_grid.png}
+    \caption{Partial regression plots for the final model, visually confirming the isolated effect of each predictor on popularity.}
+    \label{fig:partial_plots}
+\end{figure}
+
+\clearpage
+
+% ------------------------------------------------------------------
+% SECTION 5: CONCLUSION
+% ------------------------------------------------------------------
+\section{Conclusion}
+
+This analysis successfully constructed a valid and interpretable regression model to explain Spotify song popularity. Our diagnostic journey revealed that a naive application of OLS regression would have led to incorrect conclusions due to severe violations of its core assumptions. By identifying influential outliers as the root cause and applying a robust regression methodology, we built a model that provides reliable insights.
+
+According to our final model, the "hit song formula" points towards tracks that are:
+\begin{itemize}
+    \item \textbf{Highly produced}, with low acousticness and low instrumentalness.
+    \item Of \textbf{moderate tempo and duration}, avoiding the extremes.
+    \item Surprisingly, they lean towards having \textbf{lower energy and lower valence} (less happy).
+    \item For acoustic songs, the emotional tone (valence) has a much weaker impact on popularity.
+\end{itemize}
+
+The primary methodological takeaway of this project is the critical importance of rigorous, iterative model diagnostics. A model is only as good as the validity of its assumptions. Identifying the root cause of a diagnostic failure—in this case, distinguishing between skewness and outliers—is essential for choosing the correct remedy and ultimately producing a defensible and insightful statistical analysis. This process transforms regression from a simple curve-fitting exercise into a powerful tool for discovery.
+
+\end{document}
